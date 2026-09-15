@@ -14,3 +14,7 @@ actions to tactical responsibilities, consequences, and actionable improvements.
 The intended flow is to finish the Markdown in the original review session,
 then open a new session with `gpt-5.6-luna` at `max` reasoning and start the
 publishing step with `上传复盘` or `更新网页`.
+
+The public archive is ordered by `published_at` from newest to oldest. Review
+cards use green for wins and blue for losses, and only show issue tags that are
+supported by the review evidence.

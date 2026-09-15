@@ -11,8 +11,9 @@ result: <胜/负>
 played_at: <比赛时间>
 duration: <比赛时长>
 patch: <版本>
+published_at: <实际上传时间，ISO 8601>
 visibility: public
-tags: [<标签1>, <标签2>]
+tags: [<英雄或主题标签>, <确实成立的问题标签>]
 evidence_level: <数据等级>
 assessment: <good/mixed/poor>
 ---
@@ -26,6 +27,8 @@ assessment: <good/mixed/poor>
 做得好的：<可复用优点>。
 
 需要改进的：<最明确的问题、严重程度和后果>。
+
+问题标签只写确实成立、能帮助下一局改进的问题；没有明显问题时不写负面标签。
 
 # 对线建议
 

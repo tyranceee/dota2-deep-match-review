@@ -16,15 +16,17 @@
 - Nginx 配置：`/etc/nginx/conf.d/dota2-mcp.conf`
 - 公开入口：`https://ashfury.cn/dota/`
 - 单篇文章：`https://ashfury.cn/dota/reviews/<match_id>/`
+- 首页索引：`/var/www/ashfury-dota-root/dota/reviews/index.json`
 
 ## 安全发布顺序
 
 1. 先检查当前 Nginx 配置和目标目录，不覆盖无关网站文件。
 2. 发布前备份 Nginx 配置到 `/home/admin/` 下带日期的备份文件。
 3. 先上传源文件，再部署公开网页文件。
-4. 执行 `sudo nginx -t`；失败时不加载配置、不报告成功。
-5. 只使用平滑 reload，不停止 Nginx 服务。
-6. 发布后用 HTTPS 检查首页、文章页和 `/dota2/api/match/<match_id>`。
+4. 运行索引生成脚本，按 `published_at` 从新到旧重建首页索引；最新上传的必须排在第一条。
+5. 执行 `sudo nginx -t`；失败时不加载配置、不报告成功。
+6. 只使用平滑 reload，不停止 Nginx 服务。
+7. 发布后用 HTTPS 检查首页、文章页和 `/dota2/api/match/<match_id>`。
 
 ## 失败处理
 
