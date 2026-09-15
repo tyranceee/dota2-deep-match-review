@@ -1,0 +1,8 @@
+interface:
+  display_name: "Dota 复盘发布器"
+  short_description: "整理、脱敏并发布 Dota 复盘摘要到个人网站"
+  brand_color: "#C59CFF"
+  default_prompt: "使用“上传复盘”将本场 Dota 复盘整理、脱敏并发布为公开摘要。"
+
+policy:
+  allow_implicit_invocation: true
