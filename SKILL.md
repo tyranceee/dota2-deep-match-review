@@ -50,10 +50,10 @@ Match ID 已确定时，直接获取该场数据，不再要求用户提供比�
 ## 按任务读取参考文件
 
 - 选择最近比赛、获取单场数据、判断解析完整度或处理接口失败：读取 [data-access.md](references/data-access.md)
-- 默认完整复盘、“复盘开始 + Match ID”或用户要求重做完整分析：读取 [full-review.md](references/full-review.md)、[equipment-review.md](references/equipment-review.md) 和 [submission-protocol.md](references/submission-protocol.md)
-- 针对已确定比赛追问某个时间点、团战、英雄、技能、装备、输出、死亡、保枪或分锅：读取 [focused-review.md](references/focused-review.md)；涉及装备、BKB、Aegis或买活时同时读取 [equipment-review.md](references/equipment-review.md)
+- 默认完整复盘、“复盘开始 + Match ID”或用户要求重做完整分析：读取 [full-review.md](references/full-review.md)、[role-and-gameplan.md](references/role-and-gameplan.md)、[equipment-review.md](references/equipment-review.md) 和 [submission-protocol.md](references/submission-protocol.md)
+- 针对已确定比赛追问某个时间点、团战、英雄、职责、技能、装备、输出、死亡、保枪或分锅：读取 [focused-review.md](references/focused-review.md)；涉及英雄真实职责、团队赋能、空间、保护或团战博弈时同时读取 [role-and-gameplan.md](references/role-and-gameplan.md)；涉及装备、BKB、Aegis或买活时同时读取 [equipment-review.md](references/equipment-review.md)
 
-完整复盘同时读取 `data-access.md`、`full-review.md`、`equipment-review.md` 和 `submission-protocol.md`。若当前环境可以运行 Python，必须先运行 `scripts/extract_match_facts.py` 生成统一事实账本；否则按提交协议手工建立同等账本。专项追问已有完整数据时，只需读取其对应参考文件；需要补取数据时再读取 `data-access.md`。
+完整复盘同时读取 `data-access.md`、`full-review.md`、`role-and-gameplan.md`、`equipment-review.md` 和 `submission-protocol.md`。若当前环境可以运行 Python，必须先运行 `scripts/extract_match_facts.py` 生成统一事实账本；否则按提交协议手工建立同等账本。专项追问已有完整数据时，只需读取其对应参考文件；需要补取数据时再读取 `data-access.md`。
 
 ## 通用执行合同
 
@@ -88,15 +88,21 @@ KDA、净资产、总伤害、死亡、承伤、治疗和建筑伤害都不能�
 
 `这个英雄在这局应该创造什么胜利条件，实际完成了多少？`
 
+位置标签不等于本局真实职责。分析前先识别双方的持续输出发动机、空间/前排承担者、保护与反手点、控制枢纽和目标转化点。有些核心的首要任务不是击杀或最高伤害，而是活过第一轮、吸收资源、维持阵型、保护持续输出点并完成团后目标。低伤害不能自动判为低价值，高伤害也不能自动证明履责。
+
+完整复盘还必须提出可讨论的双方博弈假设：全局提炼1—3个贯穿比赛的核心博弈，每波决定性团战只提炼一个最关键的博弈命题，并用实际事件和结果检验。博弈思路是模型判断，不得写成玩家真实意图；具体方法见 [role-and-gameplan.md](references/role-and-gameplan.md)。
+
 ### 4. 默认完整复盘的硬性覆盖
 
 默认完整复盘必须覆盖：
 
+- 1—3个贯穿比赛的全局博弈思路；每波决定性团战各有一个核心博弈，并用实际结果验证
 - 三条线，并区分纯对线与10—15分钟补发育
 - 双方辅助0—6分钟英雄伤害及其向核心发育的转化
 - 双方各2—4个真正改变团战结构的关键技能
 - 十名玩家的关键装备与强势窗口；六核完整出装路线、四辅助功能装、所有BKB持有者和每代Aegis单独审计
 - 双方一、二、三号位六名核心的独立审计和同位置横向比较
+- 双方持续输出发动机、空间/保护核心和目标转化点的真实职责与相互赋能
 - 约3—5波决定比赛走势的团战及其地图收益
 - 用户个人表现、关键决策点和可执行改进
 - 装备、伤害对象、建筑、Roshan/Aegis、买活和关键死亡
@@ -140,11 +146,13 @@ KDA、净资产、总伤害、死亡、承伤、治疗和建筑伤害都不能�
 
 `购买时间 → 获得的新能力或取舍 → 第一波相关战斗 → 使用/未覆盖证据 → 击杀、存活或地图结果`
 
+`purchase_log`通常不记录出售，拆分、重组和组件复用可能只留下重复购买或成装时间。不得仅凭购买日志断言某件装备一直保留、某个组件凭空消失或玩家完整憋出下一件大件。发现重复成装、重复组件、最终栏位不一致或用户提供拆装记忆时，必须重建组件流并修正装备真空期判断。
+
 具体选择标准、BKB和Aegis模板见 [equipment-review.md](references/equipment-review.md)。
 
 ### 8. 观点修正
 
-用户提出新的比赛体验或反证时，重新检查相关窗口。新证据推翻旧判断，应明确修正，不维护错误结论。
+用户提出新的比赛体验、职责理解、拆装/出售记忆、博弈思路或反证时，先检查是否与数据相容，再重新检查相关窗口。相容的玩家回忆作为“玩家复述”独立证据层使用；它不能改写原始数据，但可以补足购买日志、目标意图和职责语境。新证据推翻旧判断时，明确说明原判断错在事实、职责模型还是评价标准，并直接修正，不维护错误结论。
 
 ## 输出方式
 

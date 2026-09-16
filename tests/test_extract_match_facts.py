@@ -44,6 +44,7 @@ def synthetic_match():
 
 def complete_legacy_coverage(ledger):
     coverage = ledger["analysis_coverage_template"]
+    coverage["global_gameplans"].update({"selected": 2, "completed": 2})
     coverage["lanes"]["completed"] = 3
     coverage["support_lane_pressure"]["completed"] = 4
     coverage["cores"]["completed"] = 6
@@ -56,7 +57,9 @@ def complete_legacy_coverage(ledger):
             "dire_completed": 2,
         }
     )
-    coverage["decisive_fights"].update({"selected": 3, "completed": 3})
+    coverage["decisive_fights"].update(
+        {"selected": 3, "completed": 3, "gameplans_completed": 3}
+    )
     coverage["user_deaths"]["completed"] = 0
     coverage["resource_categories"]["completed"] = list(coverage["resource_categories"]["required"])
     coverage["evidence_labels"] = "COMPLETE"

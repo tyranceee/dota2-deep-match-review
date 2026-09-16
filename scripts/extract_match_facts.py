@@ -454,6 +454,7 @@ def coverage_template(match: dict[str, Any], user_account_id: Any) -> dict[str, 
         "support_lane_pressure": {"required": 4, "completed": 0},
         "cores": {"required": 6, "completed": 0},
         "supports": {"required": 4, "completed": 0},
+        "global_gameplans": {"required_range": [1, 3], "selected": 0, "completed": 0},
         "key_skills": {
             "required_each_side": [2, 4],
             "radiant_selected": 0,
@@ -461,7 +462,12 @@ def coverage_template(match: dict[str, Any], user_account_id: Any) -> dict[str, 
             "dire_selected": 0,
             "dire_completed": 0,
         },
-        "decisive_fights": {"required_range": [3, 5], "selected": 0, "completed": 0},
+        "decisive_fights": {
+            "required_range": [3, 5],
+            "selected": 0,
+            "completed": 0,
+            "gameplans_completed": 0,
+        },
         "user_deaths": {"required": user_deaths, "completed": 0},
         "resource_categories": {
             "required": ["damage_targets", "buildings", "roshan", "buybacks"],
@@ -636,6 +642,21 @@ def validate_coverage(ledger: dict[str, Any]) -> list[str]:
         if required is None or completed != required:
             missing.append(f"{key}: completed={completed}, required={required}")
 
+    gameplans = coverage.get("global_gameplans") or {}
+    gameplan_low, gameplan_high = (gameplans.get("required_range") or [1, 3])[:2]
+    selected_gameplans = gameplans.get("selected")
+    completed_gameplans = gameplans.get("completed")
+    if (
+        not isinstance(selected_gameplans, int)
+        or not gameplan_low <= selected_gameplans <= gameplan_high
+        or completed_gameplans != selected_gameplans
+    ):
+        missing.append(
+            "global_gameplans: "
+            f"selected={selected_gameplans}, completed={completed_gameplans}, "
+            f"required={gameplan_low}-{gameplan_high}"
+        )
+
     skills = coverage.get("key_skills") or {}
     low, high = (skills.get("required_each_side") or [2, 4])[:2]
     for side in ("radiant", "dire"):
@@ -650,6 +671,11 @@ def validate_coverage(ledger: dict[str, Any]) -> list[str]:
     completed = fights.get("completed")
     if not isinstance(selected, int) or not fight_low <= selected <= fight_high or completed != selected:
         missing.append(f"decisive_fights: selected={selected}, completed={completed}, required={fight_low}-{fight_high}")
+    if fights.get("gameplans_completed") != selected:
+        missing.append(
+            "decisive_fights.gameplans_completed: "
+            f"completed={fights.get('gameplans_completed')}, required={selected}"
+        )
 
     resources = coverage.get("resource_categories") or {}
     required_resources = set(resources.get("required") or [])
