@@ -33,6 +33,7 @@
 
 ## 入口选择
 
+- 用户已附有效的完整比赛 JSON 时优先使用，不因另有初评重复下载。先辨别文件内容：带 `content_markdown` 的初评结果对象不是 OpenDota 原始比赛；带 `truncated` / `raw_prefix` 的裁剪对象也不是完整解析。
 - 配置为 `auto`：Chat/浏览器环境先用页面入口；能稳定读取 JSON 的工具环境先用 JSON 接口
 - 配置为 `page-first`：先访问 `/page/match/{match_id}`，再尝试 JSON 接口
 - 配置为 `json-first`：先访问 `/match/{match_id}`，再尝试页面入口
@@ -106,6 +107,8 @@ OpenDota 路径必须检查以下字段的类型、身份和取值：
 部分字段缺失不等于可以编造，也不必放弃所有分析。降低对应结论强度并说明限制。
 
 ## 本地事件、战斗日志与多来源
+
+模型生成的初评不属于下述补充事实来源，按 [preliminary-review.md](preliminary-review.md) 单独处理。模型的联网结论也不能直接当作本场事件；需回到原始页面核实比赛补丁与适用范围。
 
 DotaReplayDesk 的 `replay-events`、`combat-log`、`combat-log-ndjson`、`manifest` 是补充来源，附件上传完成不等于其内容足以完整复盘。读取项目配置的附件清单，按实际返回的地址取文件；缺少文件时记录限制，不构造下载链接或重复申请解析。
 

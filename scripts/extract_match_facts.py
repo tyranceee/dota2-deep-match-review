@@ -61,6 +61,9 @@ GAMEPLAN_FIELDS = (
     "core_question", "resource", "plan_a", "plan_b", "observable_signals",
     "actual_choices", "result", "adjustment", "counterevidence", "decision_quality",
 )
+PRE_LANE_FIELDS = (
+    "assumptions", "verdict", "mechanisms", "phase_windows", "radiant_plan", "dire_plan",
+)
 RECORD_FIELDS = {
     "global_gameplans": GAMEPLAN_FIELDS,
     "decisive_fights": GAMEPLAN_FIELDS + (
@@ -68,7 +71,7 @@ RECORD_FIELDS = {
         "resolution", "map_conversion", "contribution_and_error",
     ),
     "lanes": ("matchup", "minute_5_10", "support_damage_0_6", "early_events",
-              "rotation_boundary", "minute_10_15", "first_tower", "conclusion"),
+              "rotation_boundary", "minute_10_15", "first_tower", "conclusion", "expectation_vs_actual"),
     "support_lane_pressure": ("baseline_0", "cumulative_6", "net_damage", "lane_conversion"),
     "cores": ("role_basis", "primary_secondary_roles", "enable_and_limit", "economy_curve",
               "lane_and_recovery", "item_windows", "participation_and_targets", "key_skills",
@@ -912,6 +915,17 @@ def validate_coverage(ledger: dict[str, Any], stage: str = "final", review_text:
                 seen.add(identifier)
             require_fields(row, fields, prefix, missing)
             missing.extend(validate_evidence(row.get("evidence"), ledger, prefix))
+            if category == "lanes":
+                pre_lane = row.get("pre_lane")
+                if not isinstance(pre_lane, dict):
+                    missing.append(f"{prefix}.pre_lane: theoretical matchup object required")
+                else:
+                    require_fields(pre_lane, PRE_LANE_FIELDS, prefix + ".pre_lane", missing)
+                    lane_evidence = pre_lane.get("evidence")
+                    missing.extend(validate_evidence(lane_evidence, ledger, prefix + ".pre_lane"))
+                    if (not isinstance(lane_evidence, dict) or lane_evidence.get("judgment")
+                            not in {"模型判断", "经验估计", "无法确认"}):
+                        missing.append(f"{prefix}.pre_lane: theory must be model judgment, estimate or explicit unknown")
             if category in {"global_gameplans", "decisive_fights"}:
                 evidence = row.get("evidence")
                 if not isinstance(evidence, dict) or evidence.get("judgment") not in {"模型判断", "高概率推断", "经验估计"}:

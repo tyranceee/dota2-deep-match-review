@@ -21,6 +21,7 @@ python scripts/extract_match_facts.py --check-ledger ledger.json --stage final -
 - `analysis`：待填写的实际分析记录。
 - `equipment_analysis_template`：逐件装备与持盾审计。
 - `supplemental_sources`：可选的日志片段、录像观察或玩家复述。
+- `preliminary_review`：收到初评时可手工加入的接收与核验记录，格式见 [preliminary-review.md](preliminary-review.md)。它不属于事实来源、不参与机器完成计数；版本2门禁不会审计其内部内容，必须人工检查。
 - `analysis_coverage_template`：旧版展示字段，机器忽略其中的自报数量与状态。
 
 账本包含原始数据与玩家标识，作为本地工作文件保存；公开发布只交接脱敏后的 Markdown。
@@ -52,6 +53,8 @@ python scripts/extract_match_facts.py --check-ledger ledger.json --stage final -
 `source_type` 可为 `parsed_data`、`event_log`、`replay`、`player_recollection`、`mixed`。`judgment` 可为“数据明确显示”“模型判断”“高概率推断”“经验估计”“无法确认”“玩家复述”。“无法确认”需要非空的具体 `limitations`；纯玩家复述不能标为解析数据事实。
 
 `refs` 使用 JSON Pointer，指向账本中的 `/source_match/...` 或 `/supplemental_sources/...`。数组下标从0开始。引用必须实际可解析，不得引用自己的分析段落来证明自己。多个独立事实支持概率推断时应分别引用；引用存在不代表它支持结论，仍须人工核对语义。
+
+不得引用 `/preliminary_review/...` 或初评 Markdown 来证明比赛事实；不得把模型正文改标为 `event_log`、`replay` 或 `player_recollection` 塞入 `supplemental_sources`。初评指出的原始字段、玩家原话或网页只能作为检索线索，实际取得并核验后再按真实来源记录。两个模型对同一数据得出相同观点，不是两项独立证据。
 
 全局与单波博弈的 `judgment` 必须属于模型判断、具充分证据的高概率推断或经验估计，不能使用“数据明确显示”表达整个战术假设。
 
@@ -91,7 +94,7 @@ python scripts/extract_match_facts.py --check-ledger ledger.json --stage final -
 
 | 数组 | 身份与数量 | 内容字段 |
 | --- | --- | --- |
-| `lanes` | 三条，ID 为 `top`、`mid`、`bottom` | `matchup`, `minute_5_10`, `support_damage_0_6`, `early_events`, `rotation_boundary`, `minute_10_15`, `first_tower`, `conclusion` |
+| `lanes` | 三条，ID 为 `top`、`mid`、`bottom` | `matchup`, `pre_lane`（下述对象）, `minute_5_10`, `support_damage_0_6`, `early_events`, `rotation_boundary`, `minute_10_15`, `first_tower`, `conclusion`, `expectation_vs_actual` |
 | `support_lane_pressure` | 四条，`player_index` 对应四辅助 | `baseline_0`, `cumulative_6`, `net_damage`, `lane_conversion` |
 | `cores` | 六条，双方各三名，`player_index` 唯一 | `role_basis`, `primary_secondary_roles`, `enable_and_limit`, `economy_curve`, `lane_and_recovery`, `item_windows`, `participation_and_targets`, `key_skills`, `team_enabling`, `deaths_buybacks`, `map_conversion`, `conclusion`, `comparison` |
 | `supports` | 四条，与核心合计覆盖十名玩家一次 | `role_basis`, `lane_conversion`, `vision`, `control_and_saves`, `key_deaths`, `equipment_fit`, `conclusion` |
@@ -100,6 +103,10 @@ python scripts/extract_match_facts.py --check-ledger ledger.json --stage final -
 | `resource_categories` | 四条，ID 为 `damage_targets`、`buildings`、`roshan`、`buybacks` | `finding`, `consequence` |
 
 `player_index` 是源 `players` 数组的下标，不是账号 ID 或 `player_slot`。核心/辅助划分必须附职责判断依据，不声称是官方分配位置。中路没有辅助时，在对应字段写“不适用”及原因。
+
+每路 `pre_lane` 必须单独保存对象，包含 `assumptions`（补丁、组合、技术/资源与支援前提）、`verdict`（哪方理论占优及条件）、`mechanisms`（关键机制依据）、`phase_windows`（等级及早期装备窗口）、`radiant_plan` 和 `dire_plan`（双方合理打法与反制），以上均为具体分析内容，另有独立 `evidence`。其 `judgment` 只允许“模型判断”“经验估计”或有具体限制的“无法确认”；不能标为数据事实。引用用于确认对位/补丁等前提，不能仅引用战后经济差证明理论优势；机制来源与推导依据在正文中说明，不伪造比赛字段。
+
+`expectation_vs_actual` 单独说明实际表现相对理论预期的偏差与原因，不可用 `conclusion` 中的实际输赢替代。旧版本2账本可保留原始数据与已完成分析，补齐三路这两个新增必需项后重新验收；无须为了该项修改原始数据或只改版本号。机器核验缺项、内容类型和判断标签，正文是否真正包含这三段、是否用了事后结果倒推及理论是否合理仍由人工语义核查。
 
 用户死亡不能用掉盾事件补足次数；来源未记录的实死需要补充日志，仍无法逐次确认时标明限制。`recorded_combatants` 记录可确认参战人数下限，不能用有伤害人数直接声称实际少打多。
 
