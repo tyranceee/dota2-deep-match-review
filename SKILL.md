@@ -4,7 +4,7 @@ description: >
   对 Dota 2 单场比赛进行证据驱动的专业复盘。用户说“复盘开始”、
   提供或选择 Match ID、追问同一场比赛的对线、时间点、团战、关键技能、
   核心责任、装备、输出、建筑、死亡、保枪或分锅时使用。支持通过项目中
-  配置的数据服务获取 OpenDota 解析数据，接收初步解析 Markdown 或诊断结果，
+  配置的数据服务获取 OpenDota 解析数据，接收初步复盘 Markdown 或诊断结果，
   独立核验后结合本地解析事件、战斗日志与玩家复述完成深度复盘。
 ---
 
@@ -51,7 +51,7 @@ Match ID 已确定时，直接获取该场数据，不再要求用户提供比�
 
 ## 按任务读取参考文件
 
-- 输入包含初步解析、预复盘、比赛诊断 Markdown 或模型生成的 JSON：先读取 [preliminary-review.md](references/preliminary-review.md)，再按完整复盘或专项追问路由继续
+- 输入包含初步复盘（包括旧标题“初步解析”）、预复盘、比赛诊断 Markdown 或模型生成的 JSON：先读取 [preliminary-review.md](references/preliminary-review.md)，再按完整复盘或专项追问路由继续
 - 选择最近比赛、获取单场数据、判断解析完整度或处理接口失败：读取 [data-access.md](references/data-access.md)
 - 默认完整复盘、“复盘开始 + Match ID”或用户要求重做完整分析：读取 [full-review.md](references/full-review.md)、[role-and-gameplan.md](references/role-and-gameplan.md)、[equipment-review.md](references/equipment-review.md) 和 [submission-protocol.md](references/submission-protocol.md)
 - 针对已确定比赛追问某个时间点、团战、英雄、职责、技能、装备、输出、死亡、保枪或分锅：读取 [focused-review.md](references/focused-review.md)；涉及英雄真实职责、团队赋能、空间、保护或团战博弈时同时读取 [role-and-gameplan.md](references/role-and-gameplan.md)；涉及装备、BKB、Aegis或买活时同时读取 [equipment-review.md](references/equipment-review.md)
@@ -64,7 +64,7 @@ Match ID 已确定时，直接获取该场数据，不再要求用户提供比�
 
 ### 0. 有初评时的接力边界
 
-服务器提取事实，初评提供异常与候选问题，深度复盘独立核验、解释决策并形成训练建议。初评中的 `[数据]`、`[判断]`、`[联网]` 都是上游自报标签，不自动成为证据；初评 JSON 也不等于比赛解析 JSON。
+服务器解析并提取事实，初步复盘（简称“初评”）基于这些事实形成首轮分析、判断与改进建议，深度复盘独立核验、深化战术解释并形成最终报告。初步复盘不是单纯的数据解析，深度复盘写作也不是对初评的润色。初评中的 `[数据]`、`[判断]`、`[联网]` 都是上游自报标签，不自动成为证据；初评 JSON 也不等于比赛解析 JSON。
 
 先核对输入身份并从原始数据独立扫描全时间轴，再把初评线索合入深挖清单，回查关键结论和被遗漏的窗口。可以复用核验过的确定性提取结果，不必重念面板，但不得把初评完成度计入深度复盘覆盖。没有初评、初评过期或无法核验来源版本时，仍可依据有效原始数据继续；详细接收与降级规则见 `preliminary-review.md`。
 
